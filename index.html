@@ -93,7 +93,7 @@
                 <div class="window-content overflow-y-auto bg-gray-700">
                     <ul class="folders">
                     </ul>
-                    <div class="w-full h-full flex items-center justify-center">
+                    <div class="blank-folder w-full h-full flex items-center justify-center">
                         <div class="flex flex-col justify-center items-center mb-16 opacity-50 hover:opacity-25">
                             <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
                                 width="80" height="80"
@@ -128,6 +128,7 @@
         var folderList = document.querySelector('.folders')
         var form = document.querySelector('.folder-form')
         var duplicateBtn = document.querySelector('.duplicate')
+        var blankFolder = document.querySelector('.blank-folder')
 
         var sortable = new Sortable(folderList, {
             animation: 150,
@@ -209,6 +210,9 @@
             ([...folderList.children]).forEach(folder => {
                 folder.addEventListener('click', handleFolderClick)
             })
+            if (folderNames.length > 0) {
+                blankFolder.classList.add('hidden')
+            }
         }
 
         function getFoldersElem(folders) {
