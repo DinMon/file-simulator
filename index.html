@@ -178,8 +178,9 @@
             console.log(name)
             var indexExtractRegex = new RegExp('(.+) \\(([0-9]+)\\)')  
             var matchFound = name.match(indexExtractRegex) ?? []
-            var [, baseName, index] = matchFound
-            var isDone = (matchFound.length > 0) ? !(!!baseName) : false 
+            var [, baseName, index] = matchFound;
+            console.log(matchFound.length, baseName)
+            var isDone = (matchFound.length > 0) ? !(!!baseName) : !list.includes(name) 
             var count = index ? Number(index) + 1 : 0
             var newName = name
             baseName = baseName ?? name
@@ -205,7 +206,11 @@
         }
 
         function addFolder(name) {
-            folderNames = [...folderNames, name]
+            const newName = getDuplicateName(
+                folderNames,
+                name
+            )
+            folderNames = [...folderNames, newName]
             folderList.innerHTML = getFoldersElem(folderNames);
             ([...folderList.children]).forEach(folder => {
                 folder.addEventListener('click', handleFolderClick)
