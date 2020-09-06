@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://unpkg.com/tailwindcss@^1.0/dist/tailwind.min.css" rel="stylesheet">
+    <style>
+        body {
+            overflow: auto;
+            position: relative;
+        }
+        .svg-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        .medium-blob {
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        .window-explorer {
+            height: 60%;
+        }
+        .window-content {
+            height: calc(100% - 1.5rem - 0.25rem);
+            scrollbar-width: thin;
+            scrollbar-color: #718096 transparent;
+        }
+        *::-webkit-scrollbar {
+            width: 0.5rem;
+        }
+        *::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        *::-webkit-scrollbar-thumb {
+            background-color: #718096;
+            border: 1px solid transparent;
+        }
+        .folder:hover .folder-img{
+            animation: folderSpin .7s ease-in-out 0s alternate 1 forwards running;
+        }
+        @keyframes folderSpin {
+            0% {
+                transform: scale(.8);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+        .folder-ghost {
+            opacity: 0.4;
+        }
+        .folder-drag {
+            border-top: 2px;
+            border-color: #718096;
+            border-style: solid;
+        }
+        .folder-chosen {
+            background-color: #4299e1;
+        }
+    </style>
+    <title>Directory Simulator</title>
+</head>
+<body class="bg-gray-200">
+    <div class="svg-container w-full">
+        <svg class="medium-blob" viewBox="-1030 -70 1400 800" xmlns="http://www.w3.org/2000/svg">
+            <path id="blob" d="M460,279.5Q431,309,434.5,348Q438,387,392.5,385.5Q347,384,326.5,403Q306,422,278,413.5Q250,405,223,410.5Q196,416,151,432Q106,448,82.5,418.5Q59,389,63.5,349Q68,309,61.5,279.5Q55,250,44,214.5Q33,179,48.5,147Q64,115,109,116Q154,117,163.5,65.5Q173,14,211.5,25Q250,36,286.5,31.5Q323,27,340,65Q357,103,381,120Q405,137,444.5,155.5Q484,174,486.5,212Q489,250,460,279.5Z" fill="#00a0ff"></path>
+        </svg>
+        <svg viewBox="105 161 650 600" xmlns="http://www.w3.org/2000/svg">
+            <path id="blob" d="M392.5,275Q405,300,407.5,333Q410,366,397,400Q384,434,346,432Q308,430,279,406.5Q250,383,228.5,382.5Q207,382,189.5,369.5Q172,357,118.5,370.5Q65,384,67,346.5Q69,309,73.5,279.5Q78,250,51,213.5Q24,177,75.5,169Q127,161,135,132Q143,103,166.5,84.5Q190,66,220,58Q250,50,275.5,71.5Q301,93,320.5,109.5Q340,126,379,127Q418,128,412.5,163.5Q407,199,393.5,224.5Q380,250,392.5,275Z" fill="#7fd1ae"></path>
+        </svg>
+    </div>
+
+    <div class="container h-screen mx-auto flex items-center">
+        <div class="flex items-center h-screen flex-1">
+            <!-- File Explorer Window -->
+            <div class="window-explorer w-full z-10 shadow-2xl">
+                <!-- Titlebar -->
+                <div class="h-6 flex justify-end rounded-t-lg bg-gray-900">
+                    <div class="w-16 flex justify-around">
+                        <!-- Buttons -->
+                        <div class="rounded-full font-black text-white">+</div>
+                        <div class="rounded-full font-black text-white">-</div>
+                        <div class="px-2 rounded-full font-black bg-red-600 text-white">x</div>
+                    </div>
+                </div>
+                <!-- Content -->
+                <div class="window-content overflow-y-auto bg-gray-700">
+                    <ul class="folders">
+                    </ul>
+                    <div class="w-full h-full flex items-center justify-center">
+                        <div class="flex flex-col justify-center items-center mb-16 opacity-50 hover:opacity-25">
+                            <svg xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+                                width="80" height="80"
+                                viewBox="0 0 172 172"
+                                style=" fill:#000000;"><g transform="translate(6.45,6.45) scale(0.925,0.925)"><g fill="none" fill-rule="nonzero" stroke="none" stroke-width="none" stroke-linecap="butt" stroke-linejoin="none" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0" font-family="none" font-weight="none" font-size="none" text-anchor="none" style="mix-blend-mode: normal"><g stroke="#cccccc" stroke-width="14" stroke-linejoin="round"><path d="M5.375,153.725v-135.45h45.77995l12.9,12.9h102.57005v122.55z" fill="#95a5a6"></path><path d="M50.7099,19.35h-44.2599v133.3h159.1v-120.4h-101.9401l-12.9,-12.9M51.6,17.2l12.9,12.9h103.2v124.7h-163.4v-137.6z" fill="#cccccc"></path><g><path d="M5.375,153.725v-113.95h46.54965l12.9,-8.6h101.80035v122.55z" fill="#95a5a6"></path><path d="M165.55,32.25h-100.39855l-12.9,8.6h-45.80145v111.8h159.1v-120.4M167.7,30.1v124.7h-163.4v-116.1h47.3l12.9,-8.6z" fill="#cccccc"></path></g></g><path d="M0,172v-172h172v172z" fill="none" stroke="none" stroke-width="1" stroke-linejoin="miter"></path><g stroke="none" stroke-width="1" stroke-linejoin="miter"><path d="M5.375,153.725v-135.45h45.77995l12.9,12.9h102.57005v122.55z" fill="#95a5a6"></path><path d="M50.7099,19.35l12.27005,12.27005l0.62995,0.62995h0.8901h101.05v120.4h-159.1v-133.3h44.2599M51.6,17.2h-47.3v137.6h163.4v-124.7h-103.2l-12.9,-12.9z" fill="#cccccc"></path><g><path d="M5.375,153.725v-113.95h46.54965l12.9,-8.6h101.80035v122.55z" fill="#95a5a6"></path><path d="M165.55,32.25v120.4h-159.1v-111.8h45.15h0.65145l0.5418,-0.3612l12.3582,-8.2388h100.39855M167.7,30.1h-103.2l-12.9,8.6h-47.3v116.1h163.4v-124.7z" fill="#cccccc"></path></g></g><path d="" fill="none" stroke="none" stroke-width="1" stroke-linejoin="miter"></path><path d="" fill="none" stroke="none" stroke-width="1" stroke-linejoin="miter"></path></g></g></svg>
+                            <div class="font-mono font-bold text-gray-300">Folder is Empty</div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Bottom Bar -->
+                <div class="h-2 rounded-b-lg bg-gray-700"></div>
+            </div>
+        </div>
+        <div class="flex flex-col flex-1 items-end">
+            <form class="folder-form w-3/4 z-10">
+                <input type="text" name="file-name" id="file-name"
+                    placeholder="Enter file name"
+                    class="w-full py-6 px-8 text-lg font-mono font-medium tracking-wider rounded-full shadow-xl">
+            </form>
+            <button class="duplicate w-1/3 z-10 mt-8 mr-8 py-4 rounded-full
+                text-white text-xl font-mono font-semibold tracking-wide 
+                bg-blue-900 hover:bg-blue-800 focus:outline-none focus:shadow-outline
+                transform motion-reduce:transform-none hover:scale-105 transition ease-in-out duration-300">
+                Duplicate
+            </button>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.10.2/Sortable.min.js" integrity="sha512-ELgdXEUQM5x+vB2mycmnSCsiDZWQYXKwlzh9+p+Hff4f5LA+uf0w2pOp3j7UAuSAajxfEzmYZNOOLQuiotrt9Q==" crossorigin="anonymous"></script>
+
+    <script>
+        var folderList = document.querySelector('.folders')
+        var form = document.querySelector('.folder-form')
+        var duplicateBtn = document.querySelector('.duplicate')
+
+        var sortable = new Sortable(folderList, {
+            animation: 150,
+            ghostClass: 'folder-ghost',
+            dragClass: 'folder-drag',
+            chosenClass: 'folder-chosen',
+            onEnd: handleFolderDragged
+        });
+
+        var folderNames = []
+        var selectedFolder = null
+
+        form.addEventListener('submit', handleFolderAdd)
+        duplicateBtn.addEventListener('click', handleDuplicate)
+
+
+        function handleFolderClick(event) {
+            event.stopPropagation()
+            selectedFolder = renderFolderSelected(this, selectedFolder != null)
+        }
+
+        function renderFolderSelected(folder, isRemove) {
+            if (isRemove) {
+                folder.classList.remove('bg-blue-600')
+                folder.classList.add('hover:bg-blue-500')
+                return null
+            } else {
+                folder.classList.add('bg-blue-600')
+                folder.classList.remove('hover:bg-blue-500')
+                return folder
+            }
+        }
+
+        function handleDuplicate(event) {
+            if (selectedFolder) {
+                console.log(selectedFolder)
+                const newName = getDuplicateName(
+                    folderNames,
+                    getLiName(selectedFolder)
+                )
+                selectedFolder = renderFolderSelected(selectedFolder, selectedFolder != null)
+                addFolder(newName)
+            }
+        }
+
+        function getDuplicateName(list, name) {
+            console.log(name)
+            var indexExtractRegex = new RegExp('(.+) \\(([0-9]+)\\)')  
+            var matchFound = name.match(indexExtractRegex) ?? []
+            var [, baseName, index] = matchFound
+            var isDone = (matchFound.length > 0) ? !(!!baseName) : false 
+            var count = index ? Number(index) + 1 : 0
+            var newName = name
+            baseName = baseName ?? name
+
+            while (!isDone) {
+                newName = `${baseName} (${count})` 
+                if (!list.includes(newName)) {
+                    isDone = true
+                    continue
+                }
+                count++
+            }
+
+            return newName
+        }
+
+        function handleFolderAdd(event) {
+            event.preventDefault()
+            var inputEl = event.target.elements['file-name']
+            var filename = inputEl.value
+            inputEl.value = ''
+            addFolder(filename)
+        }
+
+        function addFolder(name) {
+            folderNames = [...folderNames, name]
+            folderList.innerHTML = getFoldersElem(folderNames);
+            ([...folderList.children]).forEach(folder => {
+                folder.addEventListener('click', handleFolderClick)
+            })
+        }
+
+        function getFoldersElem(folders) {
+           if (Array.isArray(folders)) {
+                return folders.map(getFolderLi).join('')
+           }
+           return ''
+        }
+
+        function getFolderLi(name) {
+           return `
+                <li class="folder flex items-center cursor-pointer border-b-2 border-solid border-gray-600
+                    hover:bg-blue-500">
+                    <span class="folder-img w-16"><img src="https://img.icons8.com/clouds/100/000000/folder-invoices.png"/></span>
+                    <span class="ml-3 text-white">${name}</span>
+                </li>
+           `
+        }
+
+        function handleFolderDragged(event) {
+            var liElems = [ ...event.to.children ]
+            var names = liElems.map(getLiName)
+            folderNames = names
+        }
+
+        function getLiName(li) {
+            return li.innerText
+        }
+
+    </script>
+</body>
+</html>
