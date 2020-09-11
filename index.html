@@ -164,22 +164,17 @@
 
         function handleDuplicate(event) {
             if (selectedFolder) {
-                console.log(selectedFolder)
-                const newName = getDuplicateName(
-                    folderNames,
-                    getLiName(selectedFolder)
-                )
+                addFolder(getLiName(selectedFolder))
                 selectedFolder = renderFolderSelected(selectedFolder, selectedFolder != null)
-                addFolder(newName)
             }
         }
 
         function getDuplicateName(list, name) {
-            console.log(name)
-            var indexExtractRegex = new RegExp('(.+) \\(([0-9]+)\\)')  
-            var matchFound = name.match(indexExtractRegex) ?? []
+            var regex = /(.+) \(([0-9]+)\)/  
+            var matchFound = name.match(regex) ?? []
+
             var [, baseName, index] = matchFound;
-            console.log(matchFound.length, baseName)
+
             var isDone = (matchFound.length > 0) ? !(!!baseName) : !list.includes(name) 
             var count = index ? Number(index) + 1 : 0
             var newName = name
